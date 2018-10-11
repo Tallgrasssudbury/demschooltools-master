@@ -1,0 +1,26 @@
+@(r : Entry, history : RuleHistory, recent_rps : Collection[ String ])
+
+@import helper._
+
+@main("History of " + r.getNumber() + " " + r.title, "jc") {
+
+<script type="text/javascript">
+$(function() {
+    $("table.sortable").each(function (i) {
+        sorttable.init();
+        sorttable.innerSortFunction.apply($(this).find("th")[1], []);
+    });
+});
+</script>
+
+<form method="GET">
+<p>Show history from
+<input class="date" type="text" name="start_date" value="@Application.yymmddDate(history.start_date)"> to
+<input class="date" type="text" name="end_date" value="@Application.yymmddDate(history.end_date)">
+<input type="submit">
+</p>
+</form>
+
+@rule_history(r, history, recent_rps)
+
+}

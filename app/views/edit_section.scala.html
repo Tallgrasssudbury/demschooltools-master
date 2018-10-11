@@ -1,0 +1,30 @@
+@(form: Form[Section], chapter : Chapter, is_new : Boolean, chapter_options : List [ Chapter ])
+
+@implicitField = @{ helper.FieldConstructor(myConstructor.f) }
+
+@main("Edit a section", "manual") {
+
+@if( is_new ) {
+    <h2>New section</h2>
+} else {
+    <h2>Edit section "@form("title").value()"</h2>
+}
+
+@helper.form(routes.ApplicationEditing.saveSection(), 'class -> "form-horizontal") {
+
+
+@if(form("id").value()) {
+	<input type="hidden" name="id" value="@form("id").value()"/>
+}
+		@helper.select(form("chapter.id"), options = chapter_options.map (c => ("" + c.id, c.num + " " + c.title)), '_label -> "Chapter", 'class -> "form-control")
+<div class="form-group" id="num_field">
+    <label for="num" class="col-sm-3 control-label">Number</label>
+    <div class="col-sm-6">
+    @chapter.num<input type="text" id="num" name="num" value="@form("num").value()" size="10">
+	</div>
+</div>
+        @helper.inputText(form("title"), '_label -> "Title", 'class -> "form-control")
+		@helper.checkbox(form("deleted"), '_label -> "Check this to delete")
+        @save_button("Save")
+}
+}

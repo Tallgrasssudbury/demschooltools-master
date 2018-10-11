@@ -1,0 +1,731 @@
+/* Import bootstrap and jquery-ui first so that their rules
+   are overriden by what comes next. */
+@import (inline) "bootstrap.css";
+@import (inline) "jquery-ui.css";
+
+@import "_accounting.less";
+
+#main_feedback_open {
+    position: fixed;
+    right: 100px;
+    bottom: 0px;
+    padding: 6px;
+    background: #ebe2ff;
+    cursor: pointer;
+    border-top: 1px #a67ffa solid;
+    border-left: 1px #a67ffa solid;
+    border-right: 1px #a67ffa solid;
+    border-radius: 3px;
+}
+
+#modal_wrapper.overlay::before {
+    content: " ";
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    background: #000;
+    background: rgba(0,0,0,0.7);
+}
+
+#modal_window {
+    display: none;
+    z-index: 200;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 360px;
+    overflow: auto;
+    padding: 10px 20px;
+    background: #fff;
+    border: 1px #a67ffa solid;
+    border-radius: 5px;
+}
+
+#modal_wrapper.overlay #modal_window {
+    display: block;
+}
+
+// Background for jquery-ui dialogs
+.ui-widget-overlay {
+    background: #000;
+    opacity: .5;
+}
+
+.ui-dialog-content {
+    font-size: 20px;
+}
+
+.ui-dialog {
+    font-size: 14px;
+}
+
+@media screen {
+  #footer {
+    display: none;
+  }
+}
+
+.center {
+  text-align: center;
+}
+
+.family-id {
+  font-size: .8em;
+}
+
+.family-name {
+   font-size: 18px;
+   font-style: italic;
+   margin: 0 10px;
+}
+
+.flash-error {
+	font-size: 14px;
+	background-color: #f99;
+}
+
+.subnav {
+    border-bottom: 1px rgb(166, 127, 250) solid;
+    border-left: 1px rgb(166, 127, 250) solid;
+    border-right: 1px rgb(166, 127, 250) solid;
+    padding: 5px;
+    background-color: rgb(235, 226, 255);
+    margin-bottom: 5px;
+}
+
+.subnav > a, .subnav > span > a {
+   padding: 0px 10px;
+   border-right: 1px black solid;
+}
+
+.subnav a.active {
+    background-color: yellow;
+}
+
+.dst-nav {
+    background-color: #D6C9F4;
+    border-color: rgb(166, 127, 250);
+}
+
+.dst-nav>li>a:hover, .dst-nav>li>a:focus {
+    background-color: #f0eaff;
+    border-color: rgb(166, 127, 250);
+    border-bottom-color: transparent;
+}
+
+.dst-nav>li.active>a, .dst-nav>li.active>a:hover, .dst-nav>li.active>a:focus {
+    background-color: rgb(235, 226, 255);
+    border-color: rgb(166, 127, 250);
+    border-bottom-color: transparent;
+}
+
+#meeting .form-control, .people-input-area .form-control
+{
+    display:inline;
+    width: auto;
+    height: auto;
+    padding: 2px 4px;
+}
+
+.edit-minutes-members tr:nth-child(odd) {
+    background-color: #ddd;
+};
+
+.cases-written-link {
+    color: green;
+}
+
+.charges-link {
+    color: red;
+}
+.case .esm-form-label
+{
+    text-align: right;
+    width: 100px;
+    font-weight: bold;
+}
+
+.case
+{
+    margin-top:40px;
+}
+
+.case textarea
+{
+    width: 400px;
+    height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.charge textarea
+{
+    width: 400px;
+    height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.charge :checked + span
+{
+    background-color: #ff0;
+}
+
+.charge .people_chooser .label
+{
+    width: 200px;
+    display: inline-block;
+}
+
+.charge
+{
+    margin-top: 8px;
+    padding-top: 3px;
+    border-top: 1px solid #3a87ad;
+}
+
+.rule_chooser {
+    display: inline;
+}
+
+.people_chooser {
+    display: inline;
+}
+
+.people_chooser .glyphicon {
+    right: 20px;
+    top: 3px;
+}
+
+div.continued
+{
+    float: right;
+    color: #3a87ad;
+    background-color: #d9edf7;
+    padding: 5px;
+    margin-right: -15px;
+    margin-bottom: -15px;
+}
+
+.clear-case {
+    float: right;
+}
+
+.continued :checked + span
+{
+    background-color: #ff0;
+}
+
+span {}
+
+.people-input-area {
+    background: #eee;
+    border: 1px solid #ccc;
+    line-height: 2.5em;
+    padding: 10px;
+}
+
+.people-input-area .name .label {
+    cursor: auto;
+}
+
+.people_chooser .people {
+    display: inline;
+}
+
+.name img {
+    cursor: pointer;
+}
+
+.name .label
+{
+    cursor: pointer;
+    font-size: inherit;
+    margin-left: 5px;
+}
+
+img.x {
+    cursor: pointer;
+}
+
+.name
+{
+  display:inline;
+}
+
+.label.more-info {
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.rule .label
+{
+    cursor: pointer;
+    display:inline-block;
+    font-size: inherit;
+    width: 200px;
+}
+
+.rule
+{
+    display:inline-block;
+}
+
+#sidebar
+{
+    position: fixed;
+    height: 100%;
+    width: 300px;
+    overflow-y: scroll;
+    top: 0px;
+    left: 0px;
+    background: white;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#notice
+{
+    position:fixed;
+    top: 0px;
+    left: 500px;
+    background: yellow;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+label {
+	font-weight: normal;
+}
+
+body {
+	font-size: 12px;
+    padding-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#attendance-student-picker {
+  border: 1px solid #ccc;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 1em;
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+.attendance-view {
+  th {
+    text-align: center;
+  }
+}
+
+#attendance-editing {
+  td {
+    padding: 1px;
+  }
+  .color-bar {
+    width: 60px;
+  }
+}
+
+.attendance-code {
+  font-size: 12px;
+  text-align: center;
+}
+
+td.attendance-error {
+  font-size: 18px;
+  text-align: center;
+  color: red;
+  font-weight: bold;
+}
+
+.attendance-view .empty {
+  color: #aaa;
+}
+
+.attendance-time-cell {
+  width: 60px;
+}
+
+.attendance-view .shade {
+    background: #ddd;
+}
+
+.friday-row {
+    border-bottom: 2px solid #999;
+}
+
+.hide-friday {
+    border-bottom: none;
+}
+
+.comment {
+  padding-bottom: 20px;
+}
+
+.limit_height {
+  max-height: 50px;
+  overflow: hidden;
+}
+
+.completed-rps {
+    color: #999;
+}
+
+.rp-moved {
+    background-color: #ffc;
+}
+
+.resolution_plans tbody>tr>td {
+    padding: 0px 2px;
+}
+
+.case_notes tbody>tr>td {
+    padding: 4px;
+}
+
+.case_notes ol {
+    -webkit-padding-start: 10px;
+}
+
+li.username {
+    float:right;
+}
+
+a.username {
+    font-weight: bold;
+}
+
+.charge label {
+    font-weight: normal;
+}
+
+.minor-referral-label {
+    margin-left: 30px;
+}
+
+.highlight {
+    background-color: #ff0;
+}
+
+
+table.sortable th {
+    cursor: pointer;
+	&:hover, &.sorttable_sorted {
+		text-decoration: underline;
+	}
+}
+
+
+/* Used in case display */
+.table tbody>tr>td.sm_decision {
+    padding-left: 1in;
+    padding-right: 1in;
+    background: #ccc;
+}
+
+.scroll-table {
+    margin-right: 30px;
+    width: 300px;
+}
+
+.scroll-table thead > tr, .scroll-table tbody {
+    display: block;
+    width: 300px;
+}
+
+.scroll-table tbody {
+    height: 350px;
+    overflow: auto;
+}
+
+.printable-res-plans td.name {
+    font-weight: bold;
+	font-size: 14px;
+}
+
+.rule_id  {
+	color: #ccc;
+}
+
+a.edit-link {
+	color:#99f;
+	font-size: 0.8em;
+}
+
+.sm-decision { background: #ff9; }
+
+.big-margin-top {
+  margin-top: 50px;
+}
+
+.instructions {
+	width: 500px;
+	font-size: 1.2em;
+}
+
+.checkbox {
+	width: .25in;
+	height: .25in;
+	border: 1px solid black;
+}
+
+.comment_tasks {
+  padding-left: 40px;
+}
+
+.comment_time {
+  color:#666;
+  font-size: 11px;
+  padding-left: 40px;
+}
+
+.person {
+  border: 1px solid rgb(121, 147, 252);
+  padding: 3px;
+  margin-bottom: 10px;
+}
+
+.person.primary {
+  border: 2px solid #f5d67f;
+  background: #fafdc6;
+}
+
+.person .male {
+    float: right;
+    background-color: #87a8fb;
+    padding: 0 10px;
+}
+
+.person .female {
+    float: right;
+    background-color: #fb87ce;
+    padding: 0 10px;
+}
+
+.person .other_gender {
+    float: right;
+    background-color: #be98e6;
+    padding: 0 10px;
+}
+
+.person .student {
+    width: 32px;
+    height: 32px;
+    float: right;
+    background-image: url('/assets/images/gold_star.png');
+}
+
+.tag_x {
+}
+
+.first_uncompleted
+{
+    font-weight: bold;
+    background: #ffff00;
+}
+
+.view-task-list
+{
+    font-size: 12px;
+    font-weight: normal;
+    padding-left: 50px;
+}
+
+/*********************************
+ Twitter Bootstrap tweaks
+ *********************************/
+
+.form-horizontal .controls {
+	margin-left: 160px;
+}
+
+.form-horizontal .form-group {
+   margin-bottom: 5px;
+}
+
+.form-horizontal .control-label {
+	padding-right: 0px;
+}
+
+.form-horizontal a {
+   margin-left: 150px;
+}
+
+.form-horizontal hr {
+   margin: 8px 0;
+   border-top: 1px solid #999;
+}
+
+hr {
+  border-top: 1px solid #999;
+}
+
+.man-chapter {
+   font-size: 18px;
+   font-weight: bold;
+}
+
+.man-section-header {
+	font-size: 14px;
+	border-bottom: 2px solid black;
+    font-weight: bold;
+    page-break-after: avoid;
+}
+
+/* Experimenting with making TOC have columns. Unfortunately
+ flying saucer doesn't render columns.
+.toc-section-entries {
+    margin-bottom: 1em;
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    background-color: #eee;
+} */
+
+@media screen and (max-width: 700px) {
+  ul.nav {
+    li {
+      a {
+        padding: 12px 4px;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 8in) {
+  .man-section {
+      width: 7in;
+  }
+  .man-entry-content {
+    width: 6in;
+  }
+}
+
+.man-entry {
+}
+
+.man-entry-num {
+	font-weight: bold;
+}
+
+.man-entry-content {
+  page-break-before: avoid;
+	margin-left: 40px;
+}
+
+.man-entry-change-history {
+    color: #999;
+}
+
+.man-last-modify-date {
+    color: #999;
+    font-weight: normal;
+    padding-left: 100px;
+    float: right;
+}
+
+.man-edit {
+	font-weight: normal;
+	font-size: 10px;
+	padding-left: 10px;
+}
+
+.entry-content-edit {
+	float: left;
+	width: 75%;
+}
+
+.markdown-guidelines {
+	float: right;
+	width: 25%;
+	padding-left: 20px;
+}
+
+.change_log {
+    margin: 12px 0 0 0;
+    border-top: 1px solid #ccc;
+}
+
+.change_log .man-entry-content {
+    width: inherit;
+}
+
+a.download-link {
+    font-size: 12px;
+    font-weight: 300;
+}
+
+a.not-link:hover {
+    text-decoration: none;
+}
+
+input.date {
+    width: 90px;
+}
+
+/***************************************************************************
+ * From http://stackoverflow.com/questions/9758587/twitter-bootstrap-multilevel-dropdown-menu
+ */
+.dropdown-submenu {
+position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+top: 0;
+left: 100%;
+margin-top: -6px;
+margin-left: -1px;
+-webkit-border-radius: 0 6px 6px 6px;
+-moz-border-radius: 0 6px 6px;
+border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+display: block;
+}
+
+.dropdown-submenu>a:after {
+display: block;
+content: " ";
+float: right;
+width: 0;
+height: 0;
+border-color: transparent;
+border-style: solid;
+border-width: 5px 0 5px 5px;
+border-left-color: #ccc;
+margin-top: 5px;
+margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+left: -100%;
+margin-left: 10px;
+-webkit-border-radius: 6px 0 6px 6px;
+-moz-border-radius: 6px 0 6px 6px;
+border-radius: 6px 0 6px 6px;
+}
+
+/*
+ * End copy from stackoverflow
+ **************************************************************************/
+
+
+@media print {
+  @import (inline) "print.css";
+}

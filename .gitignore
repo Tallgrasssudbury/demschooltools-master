@@ -1,0 +1,26 @@
+syntax:glob
+
+logs
+project/project
+project/target
+target
+dist
+
+/.idea/
+
+# JS stuff
+node_modules/
+app/assets/javascripts/gen
+.eslintcache
+npm-debug.log
+
+# School-specific files
+fairhaven/*
+the_circle_school/*
+trvs/*
+makarios_learning_community/*
+
+*~
+
+# Sublime Text files
+*.sublime-workspace

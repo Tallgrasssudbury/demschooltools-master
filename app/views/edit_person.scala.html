@@ -1,0 +1,8 @@
+@(personForm: Form[Person])
+
+@main("Editing person", "crm") {
+
+    @person_form(personForm,
+		routes.CRM.savePersonEdits(),
+		"Save")
+}

@@ -1,0 +1,27 @@
+@(people: List[Person], recent_comments: List[Comment])
+
+@import helper._
+
+@main("All people", "crm", "crm_home") {
+
+	<div class="row">
+	<div class="span4">
+    <ul>
+        @for(person <- people) {
+            <li>
+                <a href="@routes.CRM.person(person.person_id)">@person.first_name @person.last_name</a>
+            </li>
+        }
+    </ul>
+	</div>
+
+	<h3>Recent Comments</h3>
+	<div class="span6">
+		@for( c <- recent_comments ) {
+			@comment_fragment(c, true)
+		}
+	</div>
+
+	</div>
+
+}

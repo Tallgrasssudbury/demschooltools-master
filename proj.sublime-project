@@ -1,0 +1,10 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"folder_exclude_patterns": ["target", "bin", "node_modules"],
+			"file_exclude_patterns": ["bootstrap.css", "jquery-ui.js"]
+		}
+	]
+}

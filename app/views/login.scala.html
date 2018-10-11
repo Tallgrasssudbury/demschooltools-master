@@ -1,0 +1,36 @@
+@(playAuth: com.feth.play.module.pa.PlayAuthenticate, notice : String)
+
+@import helper._
+@import com.feth.play.module.pa.views.html._
+
+@main("DemSchoolTools login (" + OrgConfig.get().org.short_name + ")", "none") {
+
+	<div class="container" style="padding-top:100px;">
+	@if( notice != null ) { <div class="alert alert-warning"><strong>@notice</strong></div> }
+	<a href="@routes.Application.index()" class="btn btn-large btn-primary" style="color:white;">
+	Browse in read-only mode</a>
+
+	<hr>
+	<h3>OR</h3>
+	<hr>
+
+	<p class="instructions"><b>Warning:</b> If you log in with your Facebook or Google account and do not log
+		out of that account (easy to do),
+	   future users of this computer will have access to your status, email, and calendars, as well as DemSchoolTools.
+	   </p><p class="instructions"> If you are using <b>a shared computer</b>,
+		   DemSchoolTools recommends that you <b>enable private
+		browsing</b>. Here are instructions for recent versions of
+		<a href="https://support.mozilla.org/en-US/kb/private-browsing-use-firefox-without-history">Firefox</a>,
+		<a href="https://support.apple.com/kb/PH21413">Safari</a>, and
+		<a href="https://support.google.com/chrome/answer/95464?hl=en">Chrome</a>.
+	</p>
+
+	@forProviders(playAuth) { p =>
+		<a href="@p.getUrl()" class="btn btn-large btn-primary" style="color:white;">
+		Login with @p.getKey()</a>
+	}
+	</div>
+
+	<p style="padding-top: 100px; font-size:0.8em">Your IP address is: @Application.getRemoteIp()</p>
+	<hr/><p align=right>@Organization.getByHost().name</p>
+}

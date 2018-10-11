@@ -1,0 +1,57 @@
+@(active_rps : List[Charge], completed_rps : List[Charge])
+
+@import helper._
+
+@main("Edit " + OrgConfig.get().str_res_plans + " list", "jc", "rps") {
+
+<script type="text/javascript">
+app = {};
+app.active_rps = [];
+app.completed_rps = [];
+
+app.initial_data = {
+	active_rps : @Html(Utils.toJson(active_rps)),
+	completed_rps : @Html(Utils.toJson(completed_rps))
+}
+
+config = @Html(Utils.toJson(OrgConfig.get()));
+
+$(function() {
+    initRpList();
+});
+</script>
+
+<p><a href="#" onclick="print();return false;" class="no-print btn btn-success">
+Print active @OrgConfig.get().str_res_plans</a></p>
+<h2>Active @OrgConfig.get().str_res_plans <span class="comment_time">as of @Application.formatDateTimeLong()</span></h2>
+<table class="table active-rps printable-res-plans">
+</table>
+
+<h2 class="no-print">Recently completed @OrgConfig.get().str_res_plans</h2>
+<table class="table completed-rps printable-res-plans no-print">
+</table>
+
+<script id="rp-template" type="text/x-handlebars-template">
+<tr>
+	<td class="name col-xs-1">{{name}}
+	<td class="col-xs-3">{{case_number}}
+	{{#if closed_date}}<br/>Closed on {{closed_date}} ({{closed_day_of_week}}) {{/if}}
+	{{#if sm_date}}<br/>SM ruled on {{sm_date}} ({{sm_day_of_week}}) {{/if}}
+	<br/>{{rule_title}}
+    @if( OrgConfig.get().show_findings_in_rp_list ) {
+	   <td class="col-xs-4">@OrgConfig.get().str_findings: {{findings}}</td>
+    }
+	<td class="col-xs-3">{{resolution_plan}}
+    {{#if referred_to_sm}}
+        {{#if sm_decision}}
+            <b>[Sch. Mtg. decided:</b> {{sm_decision}}<b>]</b>
+        {{else}}
+            <br/><b>[Referred to Sch. Mtg.]</b>
+        {{/if}}
+    {{/if}}
+	<td class="col-xs-1" style="vertical-align:middle;">
+    <input class="no-print" type="checkbox"/>
+</tr>
+</script>
+
+}

@@ -1,0 +1,23 @@
+@(people : List[Person], show_checkboxes: Boolean)
+
+<table class="table sortable">
+<tr>@if( show_checkboxes ) { <th> }
+	<th width=150 >Name<th>Email<th width=150>Phone #<th>Notes
+
+@for( p <- people ) {
+	<tr>
+    @if( show_checkboxes ) {
+        <td><input type="checkbox" class="person" name="person-@p.person_id"></td>
+    }
+    <td><a href="@routes.CRM.person(p.person_id)">@p.first_name @p.last_name</a>
+	<td>@p.email
+	<td>
+	        @for(num <- p.phone_numbers) {
+				@num.number
+				@if(num.comment.length() > 0) { (@num.comment) }
+            }
+	<td>@p.notes
+	</tr>
+}
+
+</table>

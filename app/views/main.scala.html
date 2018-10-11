@@ -1,0 +1,263 @@
+@(title: String, menu : String, selectedBtn : String = "")(content: Html)
+@import com.feth.play.module.pa.views.html._
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>@title</title>
+        <script type="text/javascript"
+            src="@routes.Assets.versioned("javascripts/gen/bundle.js")"></script>
+
+        <link rel="stylesheet" media="all" href="@routes.Assets.versioned("stylesheets/main.css")" />
+
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body>
+
+    <div id="modal_wrapper">
+    <div id="modal_window">
+
+    <div style="text-align: right;"><a id="modal_close" href="#">close <b>X</b></a></div>
+
+    <h3>Thanks for your feedback!</h3>
+    <p>Please use this form to send a message to DemSchoolTools headquarters with your bug report,
+    feature request, or other comment.</p>
+
+    <form id="modal_feedback" method="POST" action="/sendFeedbackEmail" accept-charset="UTF-8">
+    <p><label>Your Name<br />
+    <input type="text" autofocus="true" size="48" name="name" value="" /></label></p>
+    <p><label>Your Email<br />
+    <input type="email" title="Please enter a valid email address" size="48" name="email" value="" /></label></p>
+    <p><label>Feedback<br />
+    <textarea name="message" cols="48" rows="8"></textarea></label></p>
+    <p><input type="submit" name="feedbackForm" value="Send Message" /></p>
+    </form>
+    </div></div>
+
+        @ifAuth() { username =>
+<div class="tabbable">
+            <ul class="dst-nav nav nav-tabs navbar-default no-print">
+            <li @if(menu.equals("crm")) { class="active" }>
+                <a href="@routes.CRM.recentComments()">People</a>
+            </li>
+            @if(OrgConfig.get().org.show_attendance) {
+                <li @if(menu.equals("attendance")) { class="active" }>
+                    <a href="@routes.Attendance.index()">Attendance</a>
+                </li>
+            }
+            @if(OrgConfig.get().org.show_custodia) {
+                <li @if(menu.equals("custodia")) { class="active" }>
+                    <a href="@routes.Attendance.viewCustodiaAdmin()">Custodia</a>
+                </li>
+            }
+            <li @if(menu.equals("jc")) { class="active" }>
+                <a href="@routes.Application.index()">@OrgConfig.get().str_jc_name_short</a>
+            </li>
+            <li @if(menu.equals("manual")) { class="active" }>
+                <a href="@routes.Application.viewManual()">@OrgConfig.get().str_manual_title_short</a>
+            </li>
+            @if(OrgConfig.get().org.show_accounting) {
+                <li @if(menu.equals("accounting")) { class="active" }>
+                    <a href="@routes.Accounting.balances()">Accounting</a>
+                </li>
+            }
+            <li @if(menu.equals("settings")) { class="active" } class="dropdown">
+                <a href="@routes.Settings.viewSettings()">Settings</a>
+            </li>
+            @if(OrgConfig.get().enable_file_sharing) {
+                <li @if(menu.equals("misc")) { class="active" } class="dropdown">
+                    <a href="@routes.Application.viewFiles()">Misc</a>
+                </li>
+            }
+            <li style="float:right;">
+                @if(Application.isCurrentUserEditor()) {
+                    <a href="@com.feth.play.module.pa.controllers.routes.Authenticate.logout">
+                        Logout</a>
+                } else {
+                    <a href="@routes.Public.index()">
+                    Login</a>
+                }
+            </li>
+            <li class="username"><a class="username">@username</a></li>
+            </ul>
+
+      <div class="tab-content no-print">
+        <div class="tab-pane @if(menu.equals("crm")) { active }" id="people">
+            <div class="subnav">
+            <a @if(selectedBtn.equals("recent_comments")) { class="active" }
+                href="@routes.CRM.recentComments()">
+                Recent comments</a>
+            <a @if(selectedBtn.equals("all_people")) { class="active" }
+                href="@routes.CRM.allPeople()">
+                All people</a>
+            <span class="dropdown">
+                <ul class="dropdown-menu">
+                    @for( kv <- Tag.getWithPrefixes() ) {
+                        @if( kv._2.size() > 1 ) {
+                            <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">@kv._1</a>
+                            <ul class="dropdown-menu">
+                            @for( t <- kv._2 ) {
+                                <li><a href="@routes.CRM.viewTag(t.id)">@t.title</a></li>
+                            }
+                            </ul></li>
+                        } else {
+                            @* There is only one tag, but the for loop is a nice way to bind
+                                the variable *@
+                            @for( t <- kv._2 ) {
+                                <li><a href="@routes.CRM.viewTag(t.id)">@t.title</a></li>
+                            }
+                        }
+                    }
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@routes.CRM.viewAllTags()">All Tags</a></li>
+                </ul>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  Tags
+                  <b class="caret"></b>
+                </a>
+            </span>
+            <span class="dropdown">
+                <ul class="dropdown-menu">
+                    @for( l <- TaskList.find.where().eq("organization", Organization.getByHost()).findList() ) {
+                        <li><a href="@routes.CRM.viewTaskList(l.id)">@l.title</a></li>
+                        }
+                </ul>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  Checklists
+                  <b class="caret"></b>
+                </a>
+            </span>
+            <input id="navbar_people_search" type="search" placeholder="Search people..."/>
+            <a href="@routes.CRM.newPerson()">Add a person</a>
+            </div>
+        </div>
+
+        @if(menu.equals("attendance")) {
+        <div class="tab-pane active" id="attendance">
+            <div class="subnav">
+            <a @if(selectedBtn.equals("attendance_home")) { class="active" }
+                href="@routes.Attendance.index("")">By year
+            </a><a class="not-link @if(selectedBtn.equals("week")) { active }">
+                View/edit week of: <input class="date attendance-week" type="textfield"></input>
+            </a><a class="not-link @if(selectedBtn.equals("person")) { active }">
+                By person:
+                <input id="navbar_attendance_people_search" type="search" placeholder="Search people..."/>
+            </a><a @if(selectedBtn.equals("attendance_codes")) { class="active" }
+                href="@routes.Attendance.viewCodes">Absence codes</a>
+            </div>
+        </div>
+        }
+
+        @if(menu.equals("accounting")) {
+            <div class="tab-pane active" id="finance">
+                <div class="subnav">
+                    <a @if(selectedBtn.equals("new_transaction")) { class="active" }
+                        href="@routes.Accounting.newTransaction()">Create Transaction</a>
+                    <a @if(selectedBtn.equals("accounting_balances")) { class="active" }
+                        href="@routes.Accounting.balances()">Balances</a>
+                    <a @if(selectedBtn.equals("accounting_report")) { class="active" }
+                        href="@routes.Accounting.report()">Report</a>
+                    <a @if(selectedBtn.equals("accounting_accounts")) { class="active" }
+                        href="@routes.Accounting.accounts()">Manage Accounts</a>
+                    <a @if(selectedBtn.equals("accounting_bank_cash_balance")) { class="active" }
+                        href="@routes.Accounting.bankCashBalance()">Bank Cash Balance</a>
+                    <a @if(selectedBtn.equals("accounting_all_transactions")) { class="active" }
+                        href="@routes.Accounting.allTransactions()">All Transactions</a>
+                </div>
+            </div>
+        }
+
+        @if(menu.equals("jc")) {
+        <div class="tab-pane  active" id="jc">
+            <div class="subnav">
+            <a @if(selectedBtn.equals("jc_home")) { class="active" }
+                href="@routes.Application.index">Home</a>
+            <a href="@routes.ApplicationEditing.editTodaysMinutes">
+                Edit today's minutes</a>
+            <a @if(selectedBtn.equals("rps")) { class="active" }
+                href="@routes.Application.editResolutionPlanList">
+                @OrgConfig.get().str_res_plans_cap</a>
+            <a @if(selectedBtn.equals("weekly_report")) { class="active" }
+                href="@routes.Application.thisWeekReport">Weekly Report</a>
+            <a @if(selectedBtn.equals("view_referred")) { class="active" }
+                href="@routes.Application.viewSchoolMeetingReferrals">
+                Charges referred to S.M.
+                @defining( Application.getActiveSchoolMeetingReferrals() ) { sm_charges =>
+                    @if( sm_charges.size() > 0 ) {
+                        <span class="badge">
+                            @sm_charges.size()
+                        </span>
+                    }
+                }
+            </a>
+            <a @if(selectedBtn.equals("view_sm")) { class="active" }
+                href="@routes.Application.viewSchoolMeetingDecisions">
+                View S.M. decisions</a>
+            <a href="@routes.Application.downloadCharges()">
+                Download charges
+                </a>
+            </div>
+        </div>
+        }
+
+        @if(menu.equals("manual")) {
+        <div class="tab-pane active" id="manual">
+            <div class="subnav">
+                <a @if(selectedBtn.equals("toc")) { class="active" }
+                    href="@routes.Application.viewManual()">Table of Contents</a>
+                <a @if(selectedBtn.equals("manual_print")) { class="active" }
+                    href="@routes.Application.printManual()">Print</a>
+                <a @if(selectedBtn.equals("manual_changes")) { class="active" }
+                    href="@routes.Application.viewManualChanges()">
+                    Changes since a date</a>
+                <a>
+                    <form method="GET" style="display:inline;" action="@routes.Application.searchManual()">
+                        <input name="searchString" type="search" placeholder="Search the manual..."/>
+                        <input type="submit" value="Search"/>
+                    </form>
+                </a>
+            </div>
+        </div>
+        }
+
+        @if(menu.equals("settings")) {
+        <div class="tab-pane active" id="settings">
+            <div class="subnav">
+            <a @if(selectedBtn.equals("settings")) { class="active" }
+                href="@routes.Settings.viewSettings()">Settings</a>
+            @* <a href="@routes.CRM.viewMailchimpSettings()">Mailchimp</a> *@
+            <a @if(selectedBtn.equals("settings_checklists")) { class="active" }
+                href="@routes.Settings.viewTaskLists()">Checklists</a>
+            <a @if(selectedBtn.equals("settings_access")) { class="active" }
+                href="@routes.Settings.viewAccess()">Users & Access</a>
+            </div>
+        </div>
+        }
+
+        @if(menu.equals("misc")) {
+        <div class="tab-pane active" id="settings">
+            <div class="subnav">
+            <a @if(selectedBtn.equals("view_files")) { class="active" }
+                href="@routes.Application.viewFiles()">Shared Files</a>
+            <a @if(selectedBtn.equals("file_sharing")) { class="active" }
+                href="@routes.Application.fileSharing()">Manage Shared Files</a>
+            </div>
+        </div>
+        }
+
+    </div>
+</div>
+    }
+
+    @if(flash.containsKey("error")) {
+        <div class="flash-error">@flash.get("error")</div>
+    }
+
+        @content
+        <div class="no-print feedback_open" id="main_feedback_open">Have Feedback?</div>
+
+    </body>
+</html>

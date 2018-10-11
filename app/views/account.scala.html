@@ -1,0 +1,70 @@
+@(account : Account)
+
+@main(account.getTitle(), "accounting") {
+
+	<h2>@account.getTitle</h2>
+
+	@if(account.person == null) {
+		<a href="@routes.Accounting.editAccount(account.id)">Edit Account</a>
+	}
+
+	@if(account.person == null && !account.hasTransactions()) {
+		<form action="@routes.Accounting.deleteAccount(account.id)" method="post">
+			<button type="submit" class="delete-account-button btn-link">Delete Account</button>
+		</form>
+		<br>
+	}
+
+	<table class="account-info-table">
+		<tr>
+			<td>Current Balance: <strong>$@account.getFormattedBalance()</strong></td>
+			@if(account.initial_balance.signum() > 0) {
+				<td>Initial Balance: $@account.getFormattedInitialBalance()</td>
+			}
+			@if(account.monthly_credit.signum() > 0) {
+				<td>Monthly Credit: $@account.getFormattedMonthlyCredit()</td>
+			}
+		</tr>
+	</table>
+	<br>
+
+	<div>
+		<label><input type="checkbox" id="hide-archived"> Hide archived transactions</label>
+	</div>
+	<br>
+
+	<table class="table sortable">
+		<tr>
+			<th>Archived</th>
+			<th>Transaction ID</th>
+			<th>Date</th>
+			<th>Created By User</th>
+			<th>Type</th>
+			<th>Description</th>
+			<th>Amount</th>
+		</tr>
+		@for(transaction <- account.getTransactionsViewModel()) {
+			<tr class="@(if(transaction.archived) "js-archivable js-archived accounting-archived" else "js-archivable")">
+				<td><input type="checkbox"
+						class="js-archive"
+						data-id="@transaction.id"
+						name="archived"
+						value="@transaction.archived"
+						@if(transaction.archived){checked="checked"}
+						/></td>
+				<td><a href="@routes.Accounting.transaction(transaction.id)">@transaction.id</a></td>
+				<td>@transaction.getFormattedDate()</td>
+				<td>@transaction.getCreatedByUserName()</td>
+				<td>@transaction.getTypeName()</td>
+				<td>@transaction.description</td>
+				<td>@transaction.getFormattedAmount(true)</td>
+			</tr>
+		}
+	</table>
+	<br>
+	<br>
+}
+
+<script type="text/javascript">
+	initTransactionList();
+</script>

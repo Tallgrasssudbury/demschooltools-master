@@ -1,0 +1,214 @@
+@(meeting : Meeting, open_cases: List[Case])
+
+@import helper._
+
+@main("Edit meeting minutes for date " + meeting.date, "jc") {
+
+<style>
+body
+{
+    margin-left: 310px;
+}
+</style>
+
+<script type="text/javascript">
+app = {}
+app.cases = []
+app.meeting_id = @meeting.id;
+app.ROLE_JC_CHAIR = @PersonAtMeeting.ROLE_JC_CHAIR
+app.ROLE_JC_MEMBER = @PersonAtMeeting.ROLE_JC_MEMBER
+app.ROLE_NOTE_TAKER = @PersonAtMeeting.ROLE_NOTE_TAKER
+app.ROLE_JC_SUB = @PersonAtMeeting.ROLE_JC_SUB
+app.ROLE_RUNNER = @PersonAtMeeting.ROLE_RUNNER
+app.ROLE_TESTIFIER = @PersonAtCase.ROLE_TESTIFIER
+app.ROLE_WRITER = @PersonAtCase.ROLE_WRITER
+
+app.people = @Html(Application.jcPeople(""))
+app.rules = @Html(Application.jsonRules(""))
+
+app.initial_data = {
+	committee : @Html(meeting.getJsonPeople(PersonAtMeeting.ROLE_JC_MEMBER)),
+	chair : @Html(meeting.getJsonPeople(PersonAtMeeting.ROLE_JC_CHAIR)),
+	notetaker : @Html(meeting.getJsonPeople(PersonAtMeeting.ROLE_NOTE_TAKER)),
+	sub : @Html(meeting.getJsonPeople(PersonAtMeeting.ROLE_JC_SUB)),
+	runners : @Html(meeting.getJsonPeople(PersonAtMeeting.ROLE_RUNNER)),
+	cases: [],
+}
+
+@for( c <- meeting.cases ) {
+	app.initial_data.cases.push( @Html(Utils.toJson(c)) );
+}
+
+config = @Html(Utils.toJson(OrgConfig.get()));
+$(function () {
+	initMinutesPage();
+});
+</script>
+
+<div id="meeting">
+</div>
+
+<div id="sidebar">
+	<h4>Click on <label class="label label-primary">A Person's Name</label> to see a person's JC history.</h4>
+	<h4>Click on <label class="label label-success">A Rule Title</label> to see all people charged with that rule.</h4>
+	<h4>Click on <label class="label label-default">More info</label> to see a person's prior charges for a rule.</h4>
+</div>
+
+<div id="notice">
+</div>
+
+<script id="meeting-template" type="text/x-handlebars-template">
+<h2>@OrgConfig.get().str_jc_name minutes<br>@Application.formatMeetingDate(meeting.date)</h2>
+<p>
+    <a href="@routes.Application.viewMeeting(meeting.id)" class="btn btn-warning">
+        View printable minutes</a>
+</p>
+<table class="edit-minutes-members">
+<tr><td>Committee:
+    <td>{{render "people-chooser" clazz="committee"}}
+<tr><td>Subs:
+    <td>{{render "people-chooser" clazz="sub"}}
+<tr><td>Chair:
+    <td>{{render "people-chooser" clazz="chair"}}
+<tr><td>Notetaker:
+    <td>{{render "people-chooser" clazz="notetaker"}}
+<tr><td>Runners:
+    <td>{{render "people-chooser" clazz="runner"}}
+</table>
+
+<div id="meeting-cases">
+</div>
+
+<div style="display:none" id="dialog-confirm" title="Are you sure?">
+    <p>This will erase all data stored for this case. It cannot be undone.</p>
+</div>
+
+</script>
+
+<script id="people-chooser" type="text/x-handlebars-template">
+	<div class="{{clazz}} people_chooser">
+    <div class="people"></div>
+  <input class="form-control person_search" type="text">
+<span class="glyphicon glyphicon-user"></span>
+    </div>
+</script>
+
+<script id="rule-template" type="text/x-handlebars-template">
+    <div class="rule"><span class="label label-success">{{name}}</span><img
+        src="@routes.Assets.versioned("images/x.png")"></div>
+</script>
+
+<script id="rule-chooser" type="text/x-handlebars-template">
+	<div class="rule_chooser">
+        <input class="form-control rule_search" type="text">
+	</div>
+</script>
+
+<script id="charge-template" type="text/x-handlebars-template">
+<div class="charge">
+<table>
+	<tr><td class="esm-form-label">Charge against:<td colspan=2>{{render "people-chooser" clazz=""}}
+	<b>Entry:</b> {{> rule-chooser}}
+	<tr><td class="esm-form-label">Plea:<td colspan=2>
+<div class="radio-inline">
+  <label><input type="radio" class="plea-guilty" value="Guilty"><span>Guilty</span></label>
+</div>
+@if( OrgConfig.get().show_no_contest_plea ) {
+<div class="radio-inline">
+  <label><input type="radio" class="plea-no-contest" value="No Contest"><span>No Contest</span></label>
+</div>
+}
+<div class="radio-inline">
+  <label><input type="radio" class="plea-not-guilty" value="Not Guilty"><span>Not Guilty</span></label>
+</div>
+@if( OrgConfig.get().show_na_plea ) {
+<div class="radio-inline">
+  <label><input type="radio" class="plea-na" value="N/A"><span>N/A</span></label>
+</div>
+}
+&nbsp;&nbsp;&nbsp;<label><input type="checkbox" class="refer-to-sm"><span> Refer to School Meeting</span></label>
+	@if( OrgConfig.get().use_minor_referrals ) {
+        <label><span class="minor-referral-label">Refer to:</span><input type="text" class="minor-referral-destination"></label>
+    }
+@if( OrgConfig.get().show_severity ) {
+    <tr><td class="esm-form-label">Severity:<td>
+    <div class="radio-inline">
+      <label><input type="radio" class="severity severity-mild" value="Mild"><span>Mild</span></label>
+    </div>
+	<div class="radio-inline">
+	  <label><input type="radio" class="severity severity-moderate" value="Moderate"><span>Moderate</span></label>
+	</div>
+	<div class="radio-inline">
+	  <label><input type="radio" class="severity severity-serious" value="Serious"><span>Serious</span></label>
+	</div>
+	<div class="radio-inline">
+	  <label><input type="radio" class="severity severity-severe" value="Severe"><span>Severe</span></label>
+	</div>
+}
+	<tr><td class="esm-form-label">@OrgConfig.get().str_res_plan_cap: <td><textarea class="resolution_plan"></textarea>
+    <td class="last-rp"></td>
+   </table>
+   <button style="margin-left: 200px" class="btn btn-danger btn-xs">Remove Charge</button>
+   </div>
+</script>
+
+<script id="case-template" type="text/x-handlebars-template">
+<div class="case panel panel-info">
+<div class="panel-heading">
+    <h4>Case #{{num}}
+        <button class="btn btn-danger btn-xs clear-case">Erase Case</button>
+    </h4>
+</div>
+<div class="panel-body">
+
+<table>
+@if(OrgConfig.get().track_writer) {
+    <tr><td class="esm-form-label">Who wrote complaint:
+    <td>{{render "people-chooser" clazz="writer"}}</tr>
+}
+
+<tr><td class="esm-form-label">Location: <td><input class="form-control location" type="text"></tr>
+<tr><td class="esm-form-label">Date of event: <td><input class="date form-control" type="text">
+<span class="esm-form-label" style="margin-left: 40px;">Time:</span><input class="form-control time" type="text"></tr>
+
+<tr><td class="esm-form-label">Who testified:<td>
+    {{render "people-chooser" clazz="testifier"}}
+</tr>
+
+<tr><td class="esm-form-label">@OrgConfig.get().str_findings: <td><textarea class="findings"></textarea></tr>
+
+</table>
+<div class="charges"></div>
+<button class="add-charges">Add charges</button>
+
+<div class="continued"><label>
+    <input type="checkbox" class="continued"><span>To be continued</span></input>
+	</label>
+</div>
+</div>
+</div>
+</script>
+
+<p><button class="btn btn-primary add-case">Add a new case</button>
+@if( open_cases.size() > 0) {
+    <div class="case panel panel-success">
+        <div class="panel-heading">
+            <h4>Cases to be continued</h4>
+        </div>
+        <div class="panel-body">
+            <p>The following open cases have been marked "to be continued". To edit them,
+                click the "continue" button next to the case you would like to edit.</p>
+            <ul class="continue-cases">
+                @for( c <- open_cases) {
+                @if( c.meeting != meeting) {
+                <li id="continue-case-@c.id">@c.case_number | @c.location | @c.findings.substring(0, scala.math.min(c.findings.length(), 80))...
+                    <button class="btn btn-xs btn-success">Continue</button>
+                </li>
+                }
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+}
